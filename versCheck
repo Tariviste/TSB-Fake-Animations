@@ -1,0 +1,16 @@
+-- credits to uh pxsta72
+local data = {
+    version = nil
+}
+
+local latest = '0.2'
+function data.checkVersion()
+    if data.version ~= latest then
+      game:GetService("Players").LocalPlayer:Kick('Outdated')
+        return false
+    end
+
+    return true
+end
+
+return data
