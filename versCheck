@@ -3,7 +3,7 @@ local data = {
     version = nil
 }
 
-local latest = '0.2'
+local latest = '0.1'
 function data.checkVersion()
     if data.version ~= latest then
       game:GetService("Players").LocalPlayer:Kick('Outdated')
