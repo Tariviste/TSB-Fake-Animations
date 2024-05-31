@@ -1,0 +1,94 @@
+local c = {}
+function c:Copy(emit)
+local emitter = emit -- emitter here
+local skf = emitter.Size.Keypoints
+local nsikf = {}
+for _, keyframe in ipairs(skf) do
+    local time = keyframe.Time
+    local value = keyframe.Value
+    local envelope = keyframe.Envelope
+    table.insert(nsikf, NumberSequenceKeypoint.new(time, value, envelope))
+end
+
+local skf = emitter.Squash.Keypoints
+local nsqk = {}
+for _, keyframe in ipairs(skf) do
+    local time = keyframe.Time
+    local value = keyframe.Value
+    local envelope = keyframe.Envelope
+    table.insert(nsqk, NumberSequenceKeypoint.new(time, value, envelope))
+end
+
+local tkf = emitter.Transparency.Keypoints
+local nttk = {}
+for _, keyframe in ipairs(tkf) do
+    local time = keyframe.Time
+    local value = keyframe.Value
+    local envelope = keyframe.Envelope
+    table.insert(nttk, NumberSequenceKeypoint.new(time, value, envelope))
+end
+
+local tt = {}
+for _, v in pairs(nttk) do
+    local str = tostring(v)
+    local com = str:split(" ")
+    table.insert(tt, "NumberSequenceKeypoint.new("..com[1]..", "..com[2]..", "..com[3]..")")
+end
+
+local st = {}
+for _, v in pairs(nsikf) do
+    local str = tostring(v)
+    local com = str:split(" ")
+    table.insert(st, "NumberSequenceKeypoint.new("..com[1]..", "..com[2]..", "..com[3]..")")
+end
+
+local sqt = {}
+for _, v in pairs(nsqk) do
+    local str = tostring(v)
+    local com = str:split(" ")
+    table.insert(sqt, "NumberSequenceKeypoint.new("..com[1]..", "..com[2]..", "..com[3]..")")
+end
+
+local ckf = emitter.Color.Keypoints
+local ct = {}
+for _, keyframe in ipairs(ckf) do
+    local time = keyframe.Time
+    local value = keyframe.Value
+    local colorValue = "Color3.new("..value.R..", "..value.G..", "..value.B..")"
+    table.insert(ct, "ColorSequenceKeypoint.new("..time..", "..colorValue..")")
+end
+local output = [[
+local ParticleEmitter = Instance.new("ParticleEmitter")
+ParticleEmitter.Name = "]]..emitter.Name..[["
+ParticleEmitter.Texture = "]]..emitter.Texture..[["
+ParticleEmitter.Parent = workspace
+ParticleEmitter.Size = ]]
+output = output.."NumberSequence.new{"..table.concat(st, ", ").."}\n"
+output = output.."ParticleEmitter.Color = ColorSequence.new{"..table.concat(ct, ", ").."}\n"
+output = output.."ParticleEmitter.Squash = NumberSequence.new{"..table.concat(sqt, ", ").."}\n"
+output = output.."ParticleEmitter.ZOffset = "..emitter.ZOffset.."\n"
+output = output.."ParticleEmitter.Brightness = "..emitter.Brightness.."\n"
+output = output.."ParticleEmitter.Lifetime = NumberRange.new("..emitter.Lifetime.Min..", "..emitter.Lifetime.Max..")\n"
+output = output.."ParticleEmitter.Rate = "..emitter.Rate.."\n"
+output = output.."ParticleEmitter.LockedToPart = "..tostring(emitter.LockedToPart).."\n"
+output = output.."ParticleEmitter.Rotation = NumberRange.new("..emitter.Rotation.Min..", "..emitter.Rotation.Max..")\n"
+output = output.."ParticleEmitter.RotSpeed = NumberRange.new("..emitter.RotSpeed.Min..", "..emitter.RotSpeed.Max..")\n"
+output = output.."ParticleEmitter.Speed = NumberRange.new("..emitter.Speed.Min..", "..emitter.Speed.Max..")\n"
+output = output.."ParticleEmitter.SpreadAngle = Vector2.new("..emitter.SpreadAngle.X..", "..emitter.SpreadAngle.Y..")\n"
+output = output.."ParticleEmitter.FlipbookFramerate = NumberRange.new("..emitter.FlipbookFramerate.Min..", "..emitter.FlipbookFramerate.Max..")\n"
+output = output.."ParticleEmitter.FlipbookLayout = "..tostring(emitter.FlipbookLayout).."\n"
+output = output.."ParticleEmitter.FlipbookMode = "..tostring(emitter.FlipbookMode).."\n"
+output = output.."ParticleEmitter.FlipbookStartRandom = "..tostring(emitter.FlipbookStartRandom).."\n"
+output = output.."ParticleEmitter.Acceleration = Vector3.new("..emitter.Acceleration.X..", "..emitter.Acceleration.Y..", "..emitter.Acceleration.Z..")\n"
+output = output.."ParticleEmitter.Orientation = "..tostring(emitter.Orientation).."\n"
+output = output.."ParticleEmitter.LightEmission = "..emitter.LightEmission.."\n"
+output = output.."ParticleEmitter.LightInfluence = "..emitter.LightInfluence.."\n"
+output = output.."ParticleEmitter.Transparency = NumberSequence.new{"..table.concat(tt, ", ").."}\n"
+output = output.."ParticleEmitter.Shape = "..tostring(emitter.Shape).."\n"
+output = output.."ParticleEmitter.Drag = "..emitter.Drag.."\n"
+output = output.."ParticleEmitter.ShapePartial = "..emitter.ShapePartial.."\n"
+output = output.."ParticleEmitter.TimeScale = "..emitter.TimeScale.."\n"
+output = output.."ParticleEmitter.EmissionDirection = "..tostring(emitter.EmissionDirection).."\n"
+return output
+end
+return c
